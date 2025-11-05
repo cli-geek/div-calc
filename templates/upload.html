@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload new File</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container border rounded col-md-10 mx-0 mx-md-auto mt-5">
+        <h1>Upload new File</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-info alert-dismissible fade show py-2" role="alert">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </span>
+                    <button type="button" class="btn-close p-2" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method=post enctype=multipart/form-data class="mb-4">
+            <div class="row align-items-end">
+                <div class="col-md-8">
+                    <label for="file" class="form-label">Choose file:</label>
+                    <input type="file" name="file" class="form-control" id="file">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Upload</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="container border rounded col-md-10 mx-0 mx-md-auto mt-5">
+        <h2>Currently Uploaded Files:</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>File name</th>
+                    <th>Size</th>
+                    <th>Date uploaded</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in files %}
+                    <tr>
+                        <td>{{ file[1] }}</td>
+                        <td>{{ file[2] }}</td>
+                        <td>{{ file[3] }}</td>
+                        <td>
+                            <form method=post action="{{ url_for('delete_file', id=file[0]) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                <td><button type="submit" class="btn btn-danger btn-sm">Delete</button></td>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+</body>
+</html>
