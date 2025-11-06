@@ -3,17 +3,24 @@ from flask import Flask, flash, request, redirect, url_for, send_from_directory,
 from werkzeug.utils import secure_filename
 import sqlite3
 from flask_bootstrap import Bootstrap
+import models
+from config import Config
 
-UPLOAD_FOLDER = 'uploads/'
-ALLOWED_EXTENSIONS = {'csv'} # change to csv later
-MAX_CONTENT_LENGTH = 16 * 1000 * 1000
-SECRET_KEY = 'supersecretkey123'
-DATABASE = 'info.db'
+# UPLOAD_FOLDER = 'uploads/'
+# ALLOWED_EXTENSIONS = {'csv'} 
+# MAX_CONTENT_LENGTH = 16 * 1000 * 1000  # 16000000 bytes == 16 mb
+# SECRET_KEY = 'supersecretkey123'
+# DATABASE = 'info.db'
+
+DATABASE = Config.DATABASE
+MAX_CONTENT_LENGTH = Config.MAX_CONTENT_LENGTH
+ALLOWED_EXTENSIONS = Config.ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = SECRET_KEY
+app.config.from_object(Config)
+app.config['SECRET_KEY'] = Config.SECRET_KEY
+app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 app.config['DEBUG'] = True
 
 def isExists(id):
@@ -32,22 +39,8 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def init_db():
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
 
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS files (
-            id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            file_size INT NOT NULL,
-            time TEXT DEFAULT CURRENT_TIMESTAMP
-        );
-    ''')
-
-    conn.close()
-
-init_db()
+models.init_db()
 
 #@app.route('/')
 #def index():
@@ -68,6 +61,10 @@ def upload_file():
             flash('No selected file')
             return redirect(request.url)
         
+        if file and (allowed_file(file.filename) == False):
+            flash('File type not accepted. Please upload a .csv file to begin.')
+            return redirect(request.url)
+            
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -122,6 +119,11 @@ def delete_file(id):
 
     conn.close()
 
+    return redirect(url_for('upload_file'))
+
+@app.errorhandler(413)
+def entity_too_large(error):
+    flash("File too large!")
     return redirect(url_for('upload_file'))
 
 if __name__ == '__main__':
