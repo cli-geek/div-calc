@@ -24,7 +24,7 @@ def init_db():
             id INTEGER PRIMARY KEY,
             run_date DATE,
             account TEXT,
-            ticker TEXT
+            ticker TEXT,
             name TEXT,
             amount TEXT
         );
@@ -32,3 +32,11 @@ def init_db():
 
     c.close()
 
+if __name__ == '__main__':
+    init_db()
+   # c = set_cursor()
+
+   # c.execute("SELECT name FROM sqlite_master WHERE type='table'")
+   # table = c.fetchall()
+   # print(table)
+   # c.close()
