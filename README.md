@@ -1,0 +1,8 @@
+# What is this project?
+This is my attempt at making a simple webapp which sums dividends.
+
+# Why are you making this?
+Fidelity does not offer a streamlined way to calculate your total dividends received. It does not allow you to do this for *any* period, or at all.
+
+# Will this be hosted/publicly available for anyone to use?
+No. Hosting costs money, and this project is for my personal use. If you'd like to use this project for yourself, documentation will be created on how to set it up on your computer. Upon creation, I will link it here.
